@@ -1,17 +1,17 @@
-// ============================================
+// ====================================================
 // StalCraft Division Manager - Frontend Logic
-// ============================================
+// Версия: 2.1 (с поддержкой флагов)
+// ====================================================
 
+// ==================== КОНФИГУРАЦИЯ ====================
 const API_URL = 'https://api.schelper.fairplay.su';
 let currentLanguage = localStorage.getItem('language') || 'ru';
 
-// Полные переводы
+// ==================== СЛОВАРИ ПЕРЕВОДОВ ====================
 const translations = {
     ru: {
         page_title: 'StalCraft Division Manager',
         app_title: 'StalCraft Division Manager',
-        language_ru: 'РУС',
-        language_en: 'ENG',
         login_title: 'Вход в систему',
         login_placeholder: 'Логин',
         password_placeholder: 'Пароль',
@@ -40,8 +40,6 @@ const translations = {
     en: {
         page_title: 'StalCraft Division Manager',
         app_title: 'StalCraft Division Manager',
-        language_ru: 'RUS',
-        language_en: 'ENG',
         login_title: 'Login',
         login_placeholder: 'Username',
         password_placeholder: 'Password',
@@ -69,11 +67,10 @@ const translations = {
     }
 };
 
-// Функция перевода с подстановкой
+// ==================== ФУНКЦИИ ПЕРЕВОДА ====================
 function t(key, params = {}) {
     let text = translations[currentLanguage][key] || key;
     
-    // Заменяем плейсхолдеры {key} на значения из params
     for (const [paramKey, paramValue] of Object.entries(params)) {
         text = text.replace(`{${paramKey}}`, paramValue);
     }
@@ -81,14 +78,11 @@ function t(key, params = {}) {
     return text;
 }
 
-// Применение переводов ко всем элементам
 function applyTranslations() {
-    // Текстовые элементы
     document.querySelectorAll('[data-i18n]').forEach(el => {
         const key = el.getAttribute('data-i18n');
         const params = {};
         
-        // Специальная обработка для profile-title
         if (key === 'welcome_user') {
             const user = JSON.parse(localStorage.getItem('user') || '{}');
             params.username = user.login || 'Гость';
@@ -97,26 +91,38 @@ function applyTranslations() {
         el.textContent = t(key, params);
     });
     
-    // Placeholder'ы
     document.querySelectorAll('[data-i18n-ph]').forEach(el => {
         el.placeholder = t(el.getAttribute('data-i18n-ph'));
     });
     
-    // Заголовок страницы
     document.title = t('page_title');
 }
 
-// Смена языка
+// ==================== ФУНКЦИИ ДЛЯ ФЛАГОВ ====================
+// Функция для обновления активного флага
+function updateActiveFlag() {
+    // Убираем класс active у всех флагов
+    document.querySelectorAll('.flag-btn').forEach(btn => {
+        btn.classList.remove('active');
+    });
+    
+    // Добавляем класс active к текущему флагу
+    const currentFlag = document.querySelector(`.flag-btn[onclick*="${currentLanguage}"]`);
+    if (currentFlag) {
+        currentFlag.classList.add('active');
+    }
+}
+
+// Обновлённая функция смены языка
 function setLanguage(lang) {
     currentLanguage = lang;
     localStorage.setItem('language', lang);
     applyTranslations();
-    
-    // Также меняем язык в заголовках запросов к API
+    updateActiveFlag(); // Обновляем активный флаг
     loadUserProfile();
 }
 
-// Показать/скрыть формы
+// ==================== УПРАВЛЕНИЕ ФОРМАМИ ====================
 function showRegister() {
     document.getElementById('login-form').style.display = 'none';
     document.getElementById('register-form').style.display = 'block';
@@ -135,19 +141,32 @@ function showProfile() {
     document.getElementById('profile-section').style.display = 'block';
 }
 
-// Показать сообщение
+// ==================== СООБЩЕНИЯ ====================
 function showMessage(text, type = 'success') {
     const messageEl = document.getElementById('message');
-    messageEl.textContent = text;
-    messageEl.className = `message ${type}`;
-    messageEl.style.display = 'block';
     
+    // Сначала скрываем сообщение с анимацией
+    messageEl.classList.remove('show');
+    
+    // Ждём завершения анимации скрытия (если сообщение было видно)
     setTimeout(() => {
-        messageEl.style.display = 'none';
-    }, 5000);
+        // Устанавливаем новый текст и тип
+        messageEl.textContent = text;
+        messageEl.className = `message ${type}`;
+        
+        // Показываем с плавной анимацией
+        setTimeout(() => {
+            messageEl.classList.add('show');
+        }, 50);
+        
+        // Автоматическое скрытие через 5 секунд
+        setTimeout(() => {
+            messageEl.classList.remove('show');
+        }, 5000);
+    }, 300); // Ждём 300ms для анимации скрытия
 }
 
-// Регистрация
+// ==================== API ВЗАИМОДЕЙСТВИЕ ====================
 async function register() {
     const login = document.getElementById('reg-login').value;
     const password = document.getElementById('reg-password').value;
@@ -186,7 +205,6 @@ async function register() {
     }
 }
 
-// Вход
 async function login() {
     const login = document.getElementById('login').value;
     const password = document.getElementById('password').value;
@@ -224,17 +242,16 @@ async function login() {
     }
 }
 
-// Выход
 function logout() {
     localStorage.removeItem('token');
     localStorage.removeItem('user');
     showLogin();
     document.getElementById('login').value = '';
     document.getElementById('password').value = '';
-    applyTranslations(); // Обновляем переводы (профиль скроется)
+    applyTranslations();
 }
 
-// Загрузка профиля
+// ==================== ПРОФИЛЬ ПОЛЬЗОВАТЕЛЯ ====================
 async function loadUserProfile() {
     const token = localStorage.getItem('token');
     const user = localStorage.getItem('user');
@@ -261,21 +278,19 @@ async function loadUserProfile() {
     }
 }
 
-// Обновление отображения профиля
 function updateProfileDisplay(user) {
-    // Обновляем заголовок с именем пользователя
     const profileTitle = document.getElementById('profile-title');
     profileTitle.textContent = t('welcome_user', { username: user.login });
     
-    // Обновляем информацию о фракции и роли
     const factionText = t('faction_' + user.main_faction.toLowerCase());
     const roleText = t('role_label') + ': ' + user.system_role;
     document.getElementById('profile-info').textContent = 
         `${t('faction_label')}: ${factionText} • ${roleText}`;
 }
 
-// Инициализация при загрузке
+// ==================== ИНИЦИАЛИЗАЦИЯ ====================
 document.addEventListener('DOMContentLoaded', () => {
     applyTranslations();
+    updateActiveFlag(); // Устанавливаем активный флаг при загрузке
     loadUserProfile();
 });

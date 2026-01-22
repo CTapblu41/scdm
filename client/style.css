@@ -1,136 +1,265 @@
+/* ============================================
+   StalCraft Division Manager - Исправленная версия
+   ============================================ */
+
+:root {
+    --bg-primary: #0a0a0a;
+    --bg-secondary: #1a1a1a;
+    --bg-tertiary: #252525;
+    --text-primary: #f0f0f0;
+    --text-secondary: #b0b0b0;
+    --text-muted: #888888;
+    --border-color: #333333;
+    --border-hover: #444444;
+    --accent-primary: #3a8fb8;
+    --accent-hover: #4cc9f0;
+    --success: #2e7d32;
+    --error: #c62828;
+}
+
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', sans-serif;
 }
 
 body {
-    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-    color: #fff;
+    background-color: var(--bg-primary);
+    color: var(--text-primary);
     min-height: 100vh;
     display: flex;
     justify-content: center;
     align-items: center;
     padding: 20px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
 }
 
+/* ==================== КОНТЕЙНЕР ==================== */
 .container {
-    background: rgba(30, 30, 46, 0.9);
+    background-color: var(--bg-secondary);
     padding: 40px;
-    border-radius: 20px;
-    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
-    max-width: 500px;
+    border-radius: 8px;
     width: 100%;
-    border: 1px solid #4cc9f0;
+    max-width: 440px;
+    border: 1px solid var(--border-color);
 }
 
+/* ==================== ЗАГОЛОВКИ ==================== */
 h1 {
     text-align: center;
-    color: #4cc9f0;
-    margin-bottom: 30px;
-    font-size: 2.5em;
-    text-shadow: 0 0 10px rgba(76, 201, 240, 0.5);
-}
-
-.language-switcher {
-    text-align: right;
-    margin-bottom: 20px;
-}
-
-.language-switcher button {
-    background: #4361ee;
-    color: white;
-    border: none;
-    padding: 8px 15px;
-    margin-left: 10px;
-    border-radius: 5px;
-    cursor: pointer;
-    transition: background 0.3s;
-}
-
-.language-switcher button:hover {
-    background: #3a56d4;
+    color: var(--text-primary);
+    margin-bottom: 32px;
+    font-size: 24px;
+    font-weight: 600;
+    letter-spacing: -0.25px;
 }
 
 h2 {
-    color: #f72585;
-    margin-bottom: 20px;
     text-align: center;
+    color: var(--text-primary);
+    margin-bottom: 24px;
+    font-size: 20px;
+    font-weight: 600;
+}
+
+/* ==================== ФОРМЫ (ВЫРОВНЕННАЯ ВЫСОТА) ==================== */
+.form-content {
+    min-height: 340px; /* Фиксированная высота для всех форм */
+    display: flex;
+    flex-direction: column;
+}
+
+.input-group {
+    margin-bottom: 16px;
 }
 
 input, select {
     width: 100%;
-    padding: 15px;
-    margin-bottom: 20px;
-    background: rgba(255, 255, 255, 0.1);
-    border: 2px solid #4361ee;
-    border-radius: 10px;
-    color: white;
-    font-size: 16px;
-    transition: border-color 0.3s;
+    padding: 12px 16px;
+    background-color: var(--bg-tertiary);
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    color: var(--text-primary);
+    font-size: 14px;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 input:focus, select:focus {
     outline: none;
-    border-color: #f72585;
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 0 2px rgba(58, 143, 184, 0.1);
 }
 
-button {
+/* ==================== КНОПКИ ФОРМ ==================== */
+button:not(.flag-btn) {
     width: 100%;
-    padding: 15px;
-    background: linear-gradient(90deg, #4361ee 0%, #3a56d4 100%);
+    padding: 12px 16px;
+    background-color: var(--accent-primary);
     color: white;
     border: none;
-    border-radius: 10px;
-    font-size: 18px;
-    font-weight: bold;
+    border-radius: 4px;
+    font-size: 14px;
+    font-weight: 500;
     cursor: pointer;
-    transition: transform 0.3s, box-shadow 0.3s;
-    margin-bottom: 15px;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    margin-bottom: 12px;
+    position: relative;
+    overflow: hidden;
 }
 
-button:hover {
-    transform: translateY(-3px);
-    box-shadow: 0 7px 14px rgba(0, 0, 0, 0.3);
+button:not(.flag-btn):hover {
+    background-color: var(--accent-hover);
+    transform: translateY(-2px);
 }
 
-button:active {
-    transform: translateY(0);
+button.secondary {
+    background-color: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-primary);
 }
 
-#message {
-    margin-top: 20px;
-    padding: 15px;
-    border-radius: 10px;
-    text-align: center;
-    font-weight: bold;
+button.secondary:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+    border-color: var(--accent-primary);
+    color: var(--accent-hover);
 }
 
-.message.success {
-    background: rgba(72, 187, 120, 0.2);
-    border: 2px solid #48bb78;
-    color: #48bb78;
+/* ==================== БЛОК С ФЛАГАМИ (SVG, 32px) ==================== */
+.language-flags {
+    display: flex;
+    justify-content: center;
+    gap: 12px;
+    margin-top: auto; /* Прижимаем флаги к низу формы */
+    padding-top: 20px;
+    border-top: 1px solid var(--border-color);
 }
 
-.message.error {
-    background: rgba(245, 101, 101, 0.2);
-    border: 2px solid #f56565;
-    color: #f56565;
+/* Флаги в профиле */
+.profile-flags {
+    margin-top: 16px;
+    padding-top: 16px;
 }
 
+/* Кнопки-флаги (32px) */
+.flag-btn {
+    background: transparent;
+    border: 1px solid var(--border-color);
+    border-radius: 50%;
+    width: 32px; /* Уменьшено до 32px */
+    height: 32px; /* Уменьшено до 32px */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    padding: 0;
+}
+
+.flag-btn:hover {
+    border-color: var(--accent-primary);
+    background-color: rgba(255, 255, 255, 0.05);
+    transform: scale(1.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+/* SVG флаги */
+.flag-icon {
+    width: 18px; /* Размер SVG */
+    height: 18px; /* Размер SVG */
+    border-radius: 1px;
+}
+
+/* Индикатор активного языка */
+.flag-btn.active {
+    border-color: var(--accent-primary);
+    background-color: rgba(58, 143, 184, 0.1);
+    box-shadow: 0 0 0 2px rgba(58, 143, 184, 0.2);
+}
+
+/* ==================== ПРОФИЛЬ ==================== */
 #profile-section {
     text-align: center;
+    padding: 20px 0;
 }
 
 #profile-title {
-    color: #4cc9f0;
-    font-size: 1.8em;
-    margin-bottom: 10px;
+    font-size: 20px;
+    margin-bottom: 12px;
+    color: var(--text-primary);
+    font-weight: 600;
 }
 
 #profile-info {
-    color: #b0b0d0;
-    font-size: 1.1em;
-    margin-bottom: 25px;
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin-bottom: 24px;
+    padding: 16px;
+    background-color: var(--bg-tertiary);
+    border-radius: 4px;
+    border-left: 3px solid var(--accent-primary);
+}
+
+/* ==================== СООБЩЕНИЯ (ИСПРАВЛЕННЫЕ) ==================== */
+#message {
+    margin-top: 24px;
+    padding: 0;
+    border-radius: 4px;
+    text-align: center;
+    font-size: 14px;
+    font-weight: 500;
+    display: none;
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(-10px);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Анимация появления */
+#message.show {
+    display: block;
+    padding: 12px 16px;
+    max-height: 100px;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.message.success {
+    background-color: rgba(46, 125, 50, 0.1);
+    border: 1px solid var(--success);
+    color: var(--success);
+}
+
+.message.error {
+    background-color: rgba(198, 40, 40, 0.1);
+    border: 1px solid var(--error);
+    color: var(--error);
+}
+
+/* ==================== АДАПТИВНОСТЬ ==================== */
+@media (max-width: 768px) {
+    .container {
+        padding: 32px 24px;
+        margin: 10px;
+    }
+    
+    h1 { font-size: 20px; }
+    h2 { font-size: 18px; }
+    
+    .form-content {
+        min-height: 320px;
+    }
+    
+    .flag-btn {
+        width: 30px;
+        height: 30px;
+    }
+    
+    .flag-icon {
+        width: 16px;
+        height: 16px;
+    }
 }

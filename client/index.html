@@ -10,42 +10,131 @@
     <div id="root">
         <div class="container">
             <h1 data-i18n="app_title"></h1>
-            <div class="language-switcher">
-                <button onclick="setLanguage('ru')" data-i18n="language_ru"></button>
-                <button onclick="setLanguage('en')" data-i18n="language_en"></button>
-            </div>
             
             <div id="auth-section">
                 <h2 data-i18n="login_title"></h2>
-                <div id="login-form">
-                    <input type="text" id="login" data-i18n-ph="login_placeholder">
-                    <input type="password" id="password" data-i18n-ph="password_placeholder">
+                
+                <!-- Форма входа -->
+                <div id="login-form" class="form-content">
+                    <div class="input-group">
+                        <input type="text" id="login" data-i18n-ph="login_placeholder">
+                    </div>
+                    <div class="input-group">
+                        <input type="password" id="password" data-i18n-ph="password_placeholder">
+                    </div>
                     <button onclick="login()" data-i18n="login_button"></button>
-                    <button onclick="showRegister()" data-i18n="register_button"></button>
+                    <button onclick="showRegister()" data-i18n="register_button" class="secondary"></button>
+                    
+                    <!-- Блок выбора языка с SVG флагами -->
+                    <div class="language-flags">
+                        <button class="flag-btn" onclick="setLanguage('ru')" title="Русский">
+                            <svg class="flag-icon" viewBox="0 0 640 480">
+                                <rect width="640" height="480" fill="#fff"/>
+                                <rect width="640" height="160" fill="#0039a6"/>
+                                <rect width="640" height="320" y="160" fill="#d52b1e"/>
+                            </svg>
+                        </button>
+                        <button class="flag-btn" onclick="setLanguage('en')" title="English">
+                            <svg class="flag-icon" viewBox="0 0 640 480">
+                                <defs>
+                                    <clipPath id="a">
+                                        <path fill-opacity=".7" d="M-85.3 0h682.6v512H-85.3z"/>
+                                    </clipPath>
+                                </defs>
+                                <g fill-rule="evenodd" clip-path="url(#a)" transform="translate(80) scale(.94)">
+                                    <path fill="#012169" d="M-256 0H768v512H-256z"/>
+                                    <path fill="#fff" d="M-256 0v57.2L653.5 512H768v-57.2L-141.5 0H-256zM768 0v57.2L-141.5 512H-256v-57.2L653.5 0H768z"/>
+                                    <path fill="#fff" d="M170.7 0v512h170.6V0H170.7zM-256 170.7v170.6H768V170.7H-256z"/>
+                                    <path fill="#c8102e" d="M-256 204.8v102.4H768V204.8H-256zM204.8 0v512h102.4V0H204.8zM-256 512L85.3 341.3h76.4L-179.7 512H-256zm0-512L85.3 170.7H8.5L-256 38.2V0zm606.4 170.7L691.7 0H768L426.7 170.7h-76.3zM768 512L426.7 341.3h76.4L768 473.8V512z"/>
+                                </g>
+                            </svg>
+                        </button>
+                    </div>
                 </div>
                 
-                <div id="register-form" style="display:none;">
+                <!-- Форма регистрации -->
+                <div id="register-form" style="display:none;" class="form-content">
                     <h2 data-i18n="register_title"></h2>
-                    <input type="text" id="reg-login" data-i18n-ph="login_placeholder">
-                    <input type="password" id="reg-password" data-i18n-ph="password_placeholder">
-                    <select id="reg-faction">
-                        <option value="STALKER" data-i18n="faction_stalker"></option>
-                        <option value="BANDIT" data-i18n="faction_bandit"></option>
-                        <option value="DUTY" data-i18n="faction_duty"></option>
-                        <option value="FREEDOM" data-i18n="faction_freedom"></option>
-                        <option value="MERCENARIES" data-i18n="faction_mercenaries"></option>
-                        <option value="COVENANT" data-i18n="faction_covenant"></option>
-                    </select>
+                    <div class="input-group">
+                        <input type="text" id="reg-login" data-i18n-ph="login_placeholder">
+                    </div>
+                    <div class="input-group">
+                        <input type="password" id="reg-password" data-i18n-ph="password_placeholder">
+                    </div>
+                    <div class="input-group">
+                        <select id="reg-faction">
+                            <option value="STALKER" data-i18n="faction_stalker"></option>
+                            <option value="BANDIT" data-i18n="faction_bandit"></option>
+                            <option value="DUTY" data-i18n="faction_duty"></option>
+                            <option value="FREEDOM" data-i18n="faction_freedom"></option>
+                            <option value="MERCENARIES" data-i18n="faction_mercenaries"></option>
+                            <option value="COVENANT" data-i18n="faction_covenant"></option>
+                        </select>
+                    </div>
                     <button onclick="register()" data-i18n="register_submit"></button>
-                    <button onclick="showLogin()" data-i18n="back_to_login"></button>
+                    <button onclick="showLogin()" data-i18n="back_to_login" class="secondary"></button>
+                    
+                    <!-- Блок выбора языка -->
+                    <div class="language-flags">
+                        <button class="flag-btn" onclick="setLanguage('ru')" title="Русский">
+                            <svg class="flag-icon" viewBox="0 0 640 480">
+                                <rect width="640" height="480" fill="#fff"/>
+                                <rect width="640" height="160" fill="#0039a6"/>
+                                <rect width="640" height="320" y="160" fill="#d52b1e"/>
+                            </svg>
+                        </button>
+                        <button class="flag-btn" onclick="setLanguage('en')" title="English">
+                            <svg class="flag-icon" viewBox="0 0 640 480">
+                                <defs>
+                                    <clipPath id="b">
+                                        <path fill-opacity=".7" d="M-85.3 0h682.6v512H-85.3z"/>
+                                    </clipPath>
+                                </defs>
+                                <g fill-rule="evenodd" clip-path="url(#b)" transform="translate(80) scale(.94)">
+                                    <path fill="#012169" d="M-256 0H768v512H-256z"/>
+                                    <path fill="#fff" d="M-256 0v57.2L653.5 512H768v-57.2L-141.5 0H-256zM768 0v57.2L-141.5 512H-256v-57.2L653.5 0H768z"/>
+                                    <path fill="#fff" d="M170.7 0v512h170.6V0H170.7zM-256 170.7v170.6H768V170.7H-256z"/>
+                                    <path fill="#c8102e" d="M-256 204.8v102.4H768V204.8H-256zM204.8 0v512h102.4V0H204.8zM-256 512L85.3 341.3h76.4L-179.7 512H-256zm0-512L85.3 170.7H8.5L-256 38.2V0zm606.4 170.7L691.7 0H768L426.7 170.7h-76.3zM768 512L426.7 341.3h76.4L768 473.8V512z"/>
+                                </g>
+                            </svg>
+                        </button>
+                    </div>
                 </div>
                 
-                <div id="profile-section" style="display:none;">
+                <!-- Секция профиля -->
+                <div id="profile-section" style="display:none;" class="form-content">
                     <h2 id="profile-title" data-i18n="welcome_user"></h2>
                     <p id="profile-info"></p>
                     <button onclick="logout()" data-i18n="logout_button"></button>
+                    
+                    <!-- Блок выбора языка в профиле -->
+                    <div class="language-flags profile-flags">
+                        <button class="flag-btn" onclick="setLanguage('ru')" title="Русский">
+                            <svg class="flag-icon" viewBox="0 0 640 480">
+                                <rect width="640" height="480" fill="#fff"/>
+                                <rect width="640" height="160" fill="#0039a6"/>
+                                <rect width="640" height="320" y="160" fill="#d52b1e"/>
+                            </svg>
+                        </button>
+                        <button class="flag-btn" onclick="setLanguage('en')" title="English">
+                            <svg class="flag-icon" viewBox="0 0 640 480">
+                                <defs>
+                                    <clipPath id="c">
+                                        <path fill-opacity=".7" d="M-85.3 0h682.6v512H-85.3z"/>
+                                    </clipPath>
+                                </defs>
+                                <g fill-rule="evenodd" clip-path="url(#c)" transform="translate(80) scale(.94)">
+                                    <path fill="#012169" d="M-256 0H768v512H-256z"/>
+                                    <path fill="#fff" d="M-256 0v57.2L653.5 512H768v-57.2L-141.5 0H-256zM768 0v57.2L-141.5 512H-256v-57.2L653.5 0H768z"/>
+                                    <path fill="#fff" d="M170.7 0v512h170.6V0H170.7zM-256 170.7v170.6H768V170.7H-256z"/>
+                                    <path fill="#c8102e" d="M-256 204.8v102.4H768V204.8H-256zM204.8 0v512h102.4V0H204.8zM-256 512L85.3 341.3h76.4L-179.7 512H-256zm0-512L85.3 170.7H8.5L-256 38.2V0zm606.4 170.7L691.7 0H768L426.7 170.7h-76.3zM768 512L426.7 341.3h76.4L768 473.8V512z"/>
+                                </g>
+                            </svg>
+                        </button>
+                    </div>
                 </div>
                 
+                <!-- Сообщения (теперь в потоке документа) -->
                 <div id="message" class="message"></div>
             </div>
         </div>
