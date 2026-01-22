@@ -1,6 +1,6 @@
 // ============================================
 // StalCraft Division Manager - Основной сервер
-// Файл: app.js (точка входа)
+// ИСПРАВЛЕННАЯ ВЕРСИЯ
 // ============================================
 
 require('dotenv').config();
@@ -20,7 +20,8 @@ const translations = {
             user_exists: 'User with this login already exists',
             invalid_credentials: 'Invalid login or password',
             auth_required: 'Authentication required',
-            server_error: 'Internal server error'
+            server_error: 'Internal server error',
+            fill_all_fields: 'Please fill in all fields'
         },
         success: {
             registered: 'User registered successfully',
@@ -36,7 +37,8 @@ const translations = {
             user_exists: 'Пользователь с таким логином уже существует',
             invalid_credentials: 'Неверный логин или пароль',
             auth_required: 'Требуется авторизация',
-            server_error: 'Внутренняя ошибка сервера'
+            server_error: 'Внутренняя ошибка сервера',
+            fill_all_fields: 'Заполните все поля'
         },
         success: {
             registered: 'Пользователь успешно зарегистрирован',
@@ -48,13 +50,11 @@ const translations = {
     }
 };
 
-// Функция для определения языка
 const getLanguage = (req) => {
     const langHeader = req.headers['accept-language'] || 'en';
     return langHeader.startsWith('ru') ? 'ru' : 'en';
 };
 
-// Функция перевода
 const t = (req, key) => {
     const lang = getLanguage(req);
     const keys = key.split('.');
@@ -70,14 +70,26 @@ const t = (req, key) => {
 
 // ================== MIDDLEWARE ==================
 app.use(helmet());
+
+// 🔧 ИСПРАВЛЕННЫЙ CORS
 app.use(cors({
-    origin: ['https://scdm.fairplay.su', 'http://localhost:5173'],
-    credentials: true
+    origin: [
+        'https://scdm.fairplay.su',
+        'http://localhost:3000',
+        'http://localhost:5173',
+        'http://127.0.0.1:5500'
+    ],
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization', 'Accept-Language']
 }));
+
+// Явная обработка OPTIONS
+app.options('*', cors());
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-// Middleware для добавления функции перевода в запрос
 app.use((req, res, next) => {
     req.t = (key) => t(req, key);
     next();
@@ -96,7 +108,6 @@ const dbConfig = {
 
 const pool = mysql.createPool(dbConfig);
 
-// Проверка подключения
 pool.getConnection()
     .then(connection => {
         console.log('✅ База данных подключена успешно');
@@ -107,8 +118,6 @@ pool.getConnection()
     });
 
 // ================== МАРШРУТЫ ==================
-
-// 1. Главный маршрут
 app.get('/', (req, res) => {
     res.json({ 
         message: req.t('api.welcome'),
@@ -118,20 +127,22 @@ app.get('/', (req, res) => {
     });
 });
 
-// 2. Регистрация
+// ================== РЕГИСТРАЦИЯ (ИСПРАВЛЕННАЯ) ==================
 app.post('/api/auth/register', async (req, res) => {
+    console.log('📝 Регистрация:', req.body);
+    
     try {
         const { login, password, main_faction } = req.body;
         
         if (!login || !password || !main_faction) {
             return res.status(400).json({ 
-                error: req.t('errors.required_fields')
+                error: req.t('errors.fill_all_fields')
             });
         }
 
-        // Проверка существующего пользователя
+        // 🔧 ИСПРАВЛЕНИЕ: используем правильное имя столбца
         const [existingUsers] = await pool.execute(
-            'SELECT id FROM users WHERE exbo_login = ?',
+            'SELECT id FROM users WHERE login = ?', // ← БЫЛО: exbo_login
             [login]
         );
 
@@ -141,25 +152,17 @@ app.post('/api/auth/register', async (req, res) => {
             });
         }
 
-        // Временное хранение пароля (TODO: хэширование)
-        const hashedPassword = password;
-
-        // Создание пользователя
+        // 🔧 ИСПРАВЛЕНИЕ: простая вставка (позже добавим хеширование)
         const [result] = await pool.execute(
-            `INSERT INTO users 
-             (exbo_id, exbo_login, main_faction, system_role, password_hash) 
-             VALUES (?, ?, ?, 'USER', ?)`,
-            [-Math.floor(Math.random() * 10000), login, main_faction, hashedPassword]
+            `INSERT INTO users (login, password, main_faction, system_role) 
+             VALUES (?, ?, ?, 'USER')`,
+            [login, password, main_faction]
         );
 
-        // Создание профиля
-        await pool.execute(
-            'INSERT INTO profiles (user_id, character_name) VALUES (?, ?)',
-            [result.insertId, login]
-        );
+        // Создаём временный токен
+        const token = `scdm-token-${result.insertId}-${Date.now()}`;
 
-        // Временный токен
-        const token = `temp-jwt-${Date.now()}`;
+        console.log('✅ Пользователь создан:', result.insertId);
 
         res.status(201).json({
             success: true,
@@ -174,31 +177,35 @@ app.post('/api/auth/register', async (req, res) => {
         });
 
     } catch (error) {
-        console.error('Ошибка регистрации:', error);
+        console.error('❌ Ошибка регистрации:', error);
         res.status(500).json({ 
-            error: req.t('errors.server_error')
+            error: req.t('errors.server_error'),
+            details: error.message
         });
     }
 });
 
-// 3. Вход
+// ================== ВХОД (ИСПРАВЛЕННЫЙ) ==================
 app.post('/api/auth/login', async (req, res) => {
+    console.log('🔑 Вход:', req.body.login);
+    
     try {
         const { login, password } = req.body;
         
         if (!login || !password) {
             return res.status(400).json({ 
-                error: req.t('errors.required_fields')
+                error: req.t('errors.fill_all_fields')
             });
         }
 
-        // Поиск пользователя
+        // 🔧 ИСПРАВЛЕНИЕ: правильные имена столбцов
         const [users] = await pool.execute(
-            'SELECT * FROM users WHERE exbo_login = ?',
+            'SELECT id, login, password, main_faction, system_role FROM users WHERE login = ?',
             [login]
         );
 
         if (users.length === 0) {
+            console.log('❌ Пользователь не найден:', login);
             return res.status(401).json({ 
                 error: req.t('errors.invalid_credentials')
             });
@@ -206,17 +213,19 @@ app.post('/api/auth/login', async (req, res) => {
 
         const user = users[0];
         
-        // Временная проверка пароля
-        const passwordValid = (password === user.password_hash);
+        // 🔧 Временная проверка пароля (без хеширования)
+        const passwordValid = (password === user.password);
 
         if (!passwordValid) {
+            console.log('❌ Неверный пароль для:', login);
             return res.status(401).json({ 
                 error: req.t('errors.invalid_credentials')
             });
         }
 
-        // Временный токен
-        const token = `temp-jwt-${Date.now()}`;
+        const token = `scdm-token-${user.id}-${Date.now()}`;
+
+        console.log('✅ Успешный вход:', login);
 
         res.json({
             success: true,
@@ -224,40 +233,78 @@ app.post('/api/auth/login', async (req, res) => {
             token: token,
             user: {
                 id: user.id,
-                login: user.exbo_login,
+                login: user.login,
                 main_faction: user.main_faction,
                 system_role: user.system_role
             }
         });
 
     } catch (error) {
-        console.error('Ошибка входа:', error);
+        console.error('❌ Ошибка входа:', error);
         res.status(500).json({ 
-            error: req.t('errors.server_error')
+            error: req.t('errors.server_error'),
+            details: error.message
         });
     }
 });
 
-// 4. Защищённый маршрут
-app.get('/api/auth/me', (req, res) => {
-    const token = req.headers.authorization?.replace('Bearer ', '');
+// ================== ПРОФИЛЬ (ИСПРАВЛЕННЫЙ) ==================
+app.get('/api/auth/me', async (req, res) => {
+    console.log('👤 Запрос профиля');
     
-    if (!token || !token.startsWith('temp-jwt-')) {
-        return res.status(401).json({ 
-            error: req.t('errors.auth_required')
+    try {
+        const authHeader = req.headers.authorization;
+        
+        if (!authHeader || !authHeader.startsWith('Bearer ')) {
+            return res.status(401).json({ 
+                error: req.t('errors.auth_required')
+            });
+        }
+        
+        const token = authHeader.replace('Bearer ', '');
+        
+        if (!token.startsWith('scdm-token-')) {
+            return res.status(401).json({ 
+                error: req.t('errors.auth_required')
+            });
+        }
+        
+        // Извлекаем ID пользователя из токена
+        const tokenParts = token.split('-');
+        if (tokenParts.length < 3) {
+            return res.status(401).json({ 
+                error: req.t('errors.auth_required')
+            });
+        }
+        
+        const userId = tokenParts[2];
+        
+        // 🔧 ИСПРАВЛЕНИЕ: запрашиваем реальные данные
+        const [users] = await pool.execute(
+            'SELECT id, login, main_faction, system_role FROM users WHERE id = ?',
+            [userId]
+        );
+
+        if (users.length === 0) {
+            return res.status(404).json({ 
+                error: 'User not found'
+            });
+        }
+
+        console.log('✅ Профиль загружен для ID:', userId);
+
+        res.json({
+            success: true,
+            user: users[0]
+        });
+
+    } catch (error) {
+        console.error('❌ Ошибка профиля:', error);
+        res.status(500).json({ 
+            error: req.t('errors.server_error'),
+            details: error.message
         });
     }
-    
-    // Временная логика
-    res.json({
-        success: true,
-        user: {
-            id: 1,
-            login: 'testuser',
-            main_faction: 'STALKER',
-            system_role: 'USER'
-        }
-    });
 });
 
 // ================== ЗАПУСК ==================
@@ -265,4 +312,5 @@ app.listen(PORT, () => {
     console.log(`🚀 Сервер запущен на порту ${PORT}`);
     console.log(`📡 API доступно: https://api.schelper.fairplay.su`);
     console.log(`🌐 Поддерживаемые языки: ru, en`);
+    console.log(`🎯 CORS разрешён для: https://scdm.fairplay.su`);
 });
