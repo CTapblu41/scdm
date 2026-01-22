@@ -1,22 +1,30 @@
 /* ============================================
-   StalCraft Division Manager - Исправленная версия
+   StalCraft Division Manager - Minimal Dark Theme
+   Полная рабочая версия
    ============================================ */
 
+/* ==================== CSS ПЕРЕМЕННЫЕ ==================== */
 :root {
-    --bg-primary: #0a0a0a;
-    --bg-secondary: #1a1a1a;
-    --bg-tertiary: #252525;
-    --text-primary: #f0f0f0;
-    --text-secondary: #b0b0b0;
-    --text-muted: #888888;
-    --border-color: #333333;
-    --border-hover: #444444;
-    --accent-primary: #3a8fb8;
-    --accent-hover: #4cc9f0;
-    --success: #2e7d32;
-    --error: #c62828;
+    /* Цветовая палитра */
+    --bg-primary: #0a0a0a;          /* Основной фон */
+    --bg-secondary: #1a1a1a;        /* Фон карточек */
+    --bg-tertiary: #252525;         /* Фон полей ввода */
+    
+    --text-primary: #f0f0f0;        /* Основной текст */
+    --text-secondary: #b0b0b0;      /* Вторичный текст */
+    --text-muted: #888888;          /* Приглушённый текст */
+    
+    --border-color: #333333;        /* Цвет границ */
+    --border-hover: #444444;        /* Граница при наведении */
+    
+    --accent-primary: #3a8fb8;      /* Основной акцент (кнопки) */
+    --accent-hover: #4cc9f0;        /* Акцент при наведении */
+    
+    --success: #2e7d32;             /* Успех */
+    --error: #c62828;               /* Ошибка */
 }
 
+/* ==================== БАЗОВЫЕ СТИЛИ ==================== */
 * {
     margin: 0;
     padding: 0;
@@ -37,7 +45,7 @@ body {
     -moz-osx-font-smoothing: grayscale;
 }
 
-/* ==================== КОНТЕЙНЕР ==================== */
+/* ==================== ОСНОВНОЙ КОНТЕЙНЕР ==================== */
 .container {
     background-color: var(--bg-secondary);
     padding: 40px;
@@ -45,9 +53,11 @@ body {
     width: 100%;
     max-width: 440px;
     border: 1px solid var(--border-color);
+    position: relative; /* Для позиционирования сообщений */
+    min-height: 500px; /* Фиксированная высота */
 }
 
-/* ==================== ЗАГОЛОВКИ ==================== */
+/* ==================== ТИПОГРАФИКА ==================== */
 h1 {
     text-align: center;
     color: var(--text-primary);
@@ -65,17 +75,32 @@ h2 {
     font-weight: 600;
 }
 
-/* ==================== ФОРМЫ (ВЫРОВНЕННАЯ ВЫСОТА) ==================== */
+/* ==================== ФОРМЫ И ИХ КОНТЕЙНЕРЫ ==================== */
 .form-content {
-    min-height: 340px; /* Фиксированная высота для всех форм */
     display: flex;
+    flex-direction: column;
+    min-height: 340px; /* Фиксированная высота для всех форм */
+}
+
+/* Форма входа должна быть видима по умолчанию */
+#login-form {
+    display: flex !important; /* Переопределяет inline-style */
     flex-direction: column;
 }
 
-.input-group {
-    margin-bottom: 16px;
+#register-form,
+#profile-section {
+    display: none; /* Скрыты по умолчанию */
+    flex-direction: column;
 }
 
+/* ==================== ГРУППЫ ПОЛЕЙ ВВОДА ==================== */
+.input-group {
+    margin-bottom: 16px;
+    width: 100%;
+}
+
+/* ==================== ПОЛЯ ВВОДА И ВЫБОРА ==================== */
 input, select {
     width: 100%;
     padding: 12px 16px;
@@ -85,6 +110,7 @@ input, select {
     color: var(--text-primary);
     font-size: 14px;
     transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    display: block; /* Важно для отображения */
 }
 
 input:focus, select:focus {
@@ -93,7 +119,11 @@ input:focus, select:focus {
     box-shadow: 0 0 0 2px rgba(58, 143, 184, 0.1);
 }
 
-/* ==================== КНОПКИ ФОРМ ==================== */
+input::placeholder {
+    color: var(--text-muted);
+}
+
+/* ==================== ОСНОВНЫЕ КНОПКИ ==================== */
 button:not(.flag-btn) {
     width: 100%;
     padding: 12px 16px;
@@ -108,6 +138,7 @@ button:not(.flag-btn) {
     margin-bottom: 12px;
     position: relative;
     overflow: hidden;
+    display: block; /* Важно для отображения */
 }
 
 button:not(.flag-btn):hover {
@@ -115,6 +146,7 @@ button:not(.flag-btn):hover {
     transform: translateY(-2px);
 }
 
+/* ==================== ВТОРИЧНЫЕ КНОПКИ ==================== */
 button.secondary {
     background-color: transparent;
     border: 1px solid var(--border-color);
@@ -127,7 +159,7 @@ button.secondary:hover {
     color: var(--accent-hover);
 }
 
-/* ==================== БЛОК С ФЛАГАМИ (SVG, 32px) ==================== */
+/* ==================== БЛОК С ФЛАГАМИ ==================== */
 .language-flags {
     display: flex;
     justify-content: center;
@@ -135,6 +167,7 @@ button.secondary:hover {
     margin-top: auto; /* Прижимаем флаги к низу формы */
     padding-top: 20px;
     border-top: 1px solid var(--border-color);
+    width: 100%;
 }
 
 /* Флаги в профиле */
@@ -143,13 +176,13 @@ button.secondary:hover {
     padding-top: 16px;
 }
 
-/* Кнопки-флаги (32px) */
+/* ==================== КНОПКИ-ФЛАГИ (32px) ==================== */
 .flag-btn {
     background: transparent;
     border: 1px solid var(--border-color);
     border-radius: 50%;
-    width: 32px; /* Уменьшено до 32px */
-    height: 32px; /* Уменьшено до 32px */
+    width: 32px;
+    height: 32px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -165,10 +198,21 @@ button.secondary:hover {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-/* SVG флаги */
+/* ==================== SVG ФЛАГИ ==================== */
 .flag-icon {
-    width: 18px; /* Размер SVG */
-    height: 18px; /* Размер SVG */
+    width: 18px;
+    height: 18px;
+    display: block;
+}
+
+/* Флаг России (три полосы) */
+.flag-ru {
+    border-radius: 1px;
+    overflow: visible;
+}
+
+/* Флаг Великобритании */
+.flag-uk {
     border-radius: 1px;
 }
 
@@ -179,7 +223,7 @@ button.secondary:hover {
     box-shadow: 0 0 0 2px rgba(58, 143, 184, 0.2);
 }
 
-/* ==================== ПРОФИЛЬ ==================== */
+/* ==================== СЕКЦИЯ ПРОФИЛЯ ==================== */
 #profile-section {
     text-align: center;
     padding: 20px 0;
@@ -202,29 +246,33 @@ button.secondary:hover {
     border-left: 3px solid var(--accent-primary);
 }
 
-/* ==================== СООБЩЕНИЯ (ИСПРАВЛЕННЫЕ) ==================== */
+/* ==================== СООБЩЕНИЯ (ОШИБКИ/УСПЕХ) ==================== */
 #message {
-    margin-top: 24px;
-    padding: 0;
+    position: absolute;
+    left: 20px;
+    right: 20px;
+    bottom: 20px;
+    padding: 12px 16px;
     border-radius: 4px;
     text-align: center;
     font-size: 14px;
     font-weight: 500;
-    display: none;
-    max-height: 0;
-    overflow: hidden;
+    
+    /* Анимация */
     opacity: 0;
-    transform: translateY(-10px);
-    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    transform: translateY(10px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    z-index: 100;
+    
+    /* Скрыто по умолчанию */
+    visibility: hidden;
 }
 
-/* Анимация появления */
+/* Плавное появление */
 #message.show {
-    display: block;
-    padding: 12px 16px;
-    max-height: 100px;
     opacity: 1;
     transform: translateY(0);
+    visibility: visible;
 }
 
 .message.success {
@@ -239,15 +287,32 @@ button.secondary:hover {
     color: var(--error);
 }
 
+/* ==================== УТИЛИТЫ ==================== */
+.hidden {
+    display: none !important;
+}
+
+.visible {
+    display: block !important;
+}
+
 /* ==================== АДАПТИВНОСТЬ ==================== */
 @media (max-width: 768px) {
     .container {
         padding: 32px 24px;
         margin: 10px;
+        min-height: 480px;
     }
     
-    h1 { font-size: 20px; }
-    h2 { font-size: 18px; }
+    h1 {
+        font-size: 20px;
+        margin-bottom: 24px;
+    }
+    
+    h2 {
+        font-size: 18px;
+        margin-bottom: 20px;
+    }
     
     .form-content {
         min-height: 320px;
@@ -261,5 +326,15 @@ button.secondary:hover {
     .flag-icon {
         width: 16px;
         height: 16px;
+    }
+    
+    #message {
+        left: 15px;
+        right: 15px;
+        bottom: 15px;
+    }
+    
+    button:not(.flag-btn):hover {
+        transform: translateY(-1px);
     }
 }

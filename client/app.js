@@ -145,25 +145,33 @@ function showProfile() {
 function showMessage(text, type = 'success') {
     const messageEl = document.getElementById('message');
     
-    // Сначала скрываем сообщение с анимацией
-    messageEl.classList.remove('show');
+    // Если сообщение уже видно, сначала скрываем его плавно
+    if (messageEl.classList.contains('show')) {
+        messageEl.classList.remove('show');
+        
+        // Ждём завершения анимации скрытия
+        setTimeout(() => {
+            showNewMessage(messageEl, text, type);
+        }, 300);
+    } else {
+        showNewMessage(messageEl, text, type);
+    }
+}
+
+function showNewMessage(messageEl, text, type) {
+    // Устанавливаем новый текст и тип
+    messageEl.textContent = text;
+    messageEl.className = `message ${type}`;
     
-    // Ждём завершения анимации скрытия (если сообщение было видно)
+    // Показываем с плавной анимацией
     setTimeout(() => {
-        // Устанавливаем новый текст и тип
-        messageEl.textContent = text;
-        messageEl.className = `message ${type}`;
-        
-        // Показываем с плавной анимацией
-        setTimeout(() => {
-            messageEl.classList.add('show');
-        }, 50);
-        
-        // Автоматическое скрытие через 5 секунд
-        setTimeout(() => {
-            messageEl.classList.remove('show');
-        }, 5000);
-    }, 300); // Ждём 300ms для анимации скрытия
+        messageEl.classList.add('show');
+    }, 50);
+    
+    // Автоматическое скрытие через 5 секунд
+    setTimeout(() => {
+        messageEl.classList.remove('show');
+    }, 5000);
 }
 
 // ==================== API ВЗАИМОДЕЙСТВИЕ ====================
