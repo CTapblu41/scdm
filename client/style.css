@@ -1,0 +1,136 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+body {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+    color: #fff;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 20px;
+}
+
+.container {
+    background: rgba(30, 30, 46, 0.9);
+    padding: 40px;
+    border-radius: 20px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+    max-width: 500px;
+    width: 100%;
+    border: 1px solid #4cc9f0;
+}
+
+h1 {
+    text-align: center;
+    color: #4cc9f0;
+    margin-bottom: 30px;
+    font-size: 2.5em;
+    text-shadow: 0 0 10px rgba(76, 201, 240, 0.5);
+}
+
+.language-switcher {
+    text-align: right;
+    margin-bottom: 20px;
+}
+
+.language-switcher button {
+    background: #4361ee;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    margin-left: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.language-switcher button:hover {
+    background: #3a56d4;
+}
+
+h2 {
+    color: #f72585;
+    margin-bottom: 20px;
+    text-align: center;
+}
+
+input, select {
+    width: 100%;
+    padding: 15px;
+    margin-bottom: 20px;
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid #4361ee;
+    border-radius: 10px;
+    color: white;
+    font-size: 16px;
+    transition: border-color 0.3s;
+}
+
+input:focus, select:focus {
+    outline: none;
+    border-color: #f72585;
+}
+
+button {
+    width: 100%;
+    padding: 15px;
+    background: linear-gradient(90deg, #4361ee 0%, #3a56d4 100%);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 18px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: transform 0.3s, box-shadow 0.3s;
+    margin-bottom: 15px;
+}
+
+button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 7px 14px rgba(0, 0, 0, 0.3);
+}
+
+button:active {
+    transform: translateY(0);
+}
+
+#message {
+    margin-top: 20px;
+    padding: 15px;
+    border-radius: 10px;
+    text-align: center;
+    font-weight: bold;
+}
+
+.message.success {
+    background: rgba(72, 187, 120, 0.2);
+    border: 2px solid #48bb78;
+    color: #48bb78;
+}
+
+.message.error {
+    background: rgba(245, 101, 101, 0.2);
+    border: 2px solid #f56565;
+    color: #f56565;
+}
+
+#profile-section {
+    text-align: center;
+}
+
+#profile-title {
+    color: #4cc9f0;
+    font-size: 1.8em;
+    margin-bottom: 10px;
+}
+
+#profile-info {
+    color: #b0b0d0;
+    font-size: 1.1em;
+    margin-bottom: 25px;
+}

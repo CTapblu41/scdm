@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-i18n="page_title"></title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+    <div id="root">
+        <div class="container">
+            <h1 data-i18n="app_title"></h1>
+            <div class="language-switcher">
+                <button onclick="setLanguage('ru')" data-i18n="language_ru"></button>
+                <button onclick="setLanguage('en')" data-i18n="language_en"></button>
+            </div>
+            
+            <div id="auth-section">
+                <h2 data-i18n="login_title"></h2>
+                <div id="login-form">
+                    <input type="text" id="login" data-i18n-ph="login_placeholder">
+                    <input type="password" id="password" data-i18n-ph="password_placeholder">
+                    <button onclick="login()" data-i18n="login_button"></button>
+                    <button onclick="showRegister()" data-i18n="register_button"></button>
+                </div>
+                
+                <div id="register-form" style="display:none;">
+                    <h2 data-i18n="register_title"></h2>
+                    <input type="text" id="reg-login" data-i18n-ph="login_placeholder">
+                    <input type="password" id="reg-password" data-i18n-ph="password_placeholder">
+                    <select id="reg-faction">
+                        <option value="STALKER" data-i18n="faction_stalker"></option>
+                        <option value="BANDIT" data-i18n="faction_bandit"></option>
+                        <option value="DUTY" data-i18n="faction_duty"></option>
+                        <option value="FREEDOM" data-i18n="faction_freedom"></option>
+                        <option value="MERCENARIES" data-i18n="faction_mercenaries"></option>
+                        <option value="COVENANT" data-i18n="faction_covenant"></option>
+                    </select>
+                    <button onclick="register()" data-i18n="register_submit"></button>
+                    <button onclick="showLogin()" data-i18n="back_to_login"></button>
+                </div>
+                
+                <div id="profile-section" style="display:none;">
+                    <h2 id="profile-title" data-i18n="welcome_user"></h2>
+                    <p id="profile-info"></p>
+                    <button onclick="logout()" data-i18n="logout_button"></button>
+                </div>
+                
+                <div id="message" class="message"></div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="/app.js"></script>
+</body>
+</html>
