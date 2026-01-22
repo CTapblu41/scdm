@@ -11,11 +11,13 @@
         <div class="container">
             <h1 data-i18n="app_title"></h1>
             
-            <div id="auth-section">
-                <h2 data-i18n="login_title"></h2>
-                
+            <!-- Заголовок формы -->
+            <h2 id="form-title" data-i18n="login_title"></h2>
+            
+            <!-- Контейнер для всех форм -->
+            <div id="forms-container">
                 <!-- Форма входа -->
-                <div id="login-form" class="form-content">
+                <div id="login-form">
                     <div class="input-group">
                         <input type="text" id="login" data-i18n-ph="login_placeholder">
                     </div>
@@ -25,7 +27,7 @@
                     <button onclick="login()" data-i18n="login_button"></button>
                     <button onclick="showRegister()" data-i18n="register_button" class="secondary"></button>
                     
-                    <!-- Блок выбора языка -->
+                    <!-- Флаги в форме входа -->
                     <div class="language-flags">
                         <button class="flag-btn" onclick="setLanguage('ru')" title="Русский">
                             <svg class="flag-icon flag-ru" viewBox="0 0 9 6">
@@ -50,28 +52,35 @@
                 </div>
                 
                 <!-- Форма регистрации -->
-                <div id="register-form" style="display:none;" class="form-content">
-                    <h2 data-i18n="register_title"></h2>
+                <div id="register-form">
                     <div class="input-group">
                         <input type="text" id="reg-login" data-i18n-ph="login_placeholder">
                     </div>
                     <div class="input-group">
                         <input type="password" id="reg-password" data-i18n-ph="password_placeholder">
                     </div>
-                    <div class="input-group">
-                        <select id="reg-faction">
-                            <option value="STALKER" data-i18n="faction_stalker"></option>
-                            <option value="BANDIT" data-i18n="faction_bandit"></option>
-                            <option value="DUTY" data-i18n="faction_duty"></option>
-                            <option value="FREEDOM" data-i18n="faction_freedom"></option>
-                            <option value="MERCENARIES" data-i18n="faction_mercenaries"></option>
-                            <option value="COVENANT" data-i18n="faction_covenant"></option>
-                        </select>
+                    
+                    <!-- Кастомный селект фракции -->
+                    <div class="input-group custom-select">
+                        <div class="select-header" onclick="toggleFactionSelect()">
+                            <span id="selected-faction" data-i18n="select_faction">Выберите фракцию</span>
+                            <span class="select-arrow">▼</span>
+                        </div>
+                        <div class="select-options" id="faction-options">
+                            <div class="select-option" data-value="STALKER" onclick="selectFaction('STALKER')" data-i18n="faction_stalker"></div>
+                            <div class="select-option" data-value="BANDIT" onclick="selectFaction('BANDIT')" data-i18n="faction_bandit"></div>
+                            <div class="select-option" data-value="DUTY" onclick="selectFaction('DUTY')" data-i18n="faction_duty"></div>
+                            <div class="select-option" data-value="FREEDOM" onclick="selectFaction('FREEDOM')" data-i18n="faction_freedom"></div>
+                            <div class="select-option" data-value="MERCENARIES" onclick="selectFaction('MERCENARIES')" data-i18n="faction_mercenaries"></div>
+                            <div class="select-option" data-value="COVENANT" onclick="selectFaction('COVENANT')" data-i18n="faction_covenant"></div>
+                        </div>
+                        <input type="hidden" id="reg-faction" name="faction" value="">
                     </div>
+                    
                     <button onclick="register()" data-i18n="register_submit"></button>
                     <button onclick="showLogin()" data-i18n="back_to_login" class="secondary"></button>
                     
-                    <!-- Блок выбора языка -->
+                    <!-- Флаги в форме регистрации -->
                     <div class="language-flags">
                         <button class="flag-btn" onclick="setLanguage('ru')" title="Русский">
                             <svg class="flag-icon flag-ru" viewBox="0 0 9 6">
@@ -96,13 +105,12 @@
                 </div>
                 
                 <!-- Секция профиля -->
-                <div id="profile-section" style="display:none;" class="form-content">
-                    <h2 id="profile-title" data-i18n="welcome_user"></h2>
+                <div id="profile-section">
                     <p id="profile-info"></p>
                     <button onclick="logout()" data-i18n="logout_button"></button>
                     
-                    <!-- Блок выбора языка в профиле -->
-                    <div class="language-flags profile-flags">
+                    <!-- Флаги в профиле -->
+                    <div class="language-flags">
                         <button class="flag-btn" onclick="setLanguage('ru')" title="Русский">
                             <svg class="flag-icon flag-ru" viewBox="0 0 9 6">
                                 <rect width="9" height="2" fill="#fff"/>
@@ -124,10 +132,10 @@
                         </button>
                     </div>
                 </div>
-                
-                <!-- Сообщения -->
-                <div id="message" class="message"></div>
             </div>
+            
+            <!-- Сообщения (теперь вверху экрана) -->
+            <div id="message" class="message"></div>
         </div>
     </div>
     

@@ -1,11 +1,12 @@
 // ====================================================
 // StalCraft Division Manager - Frontend Logic
-// Версия: 2.1 (с поддержкой флагов)
+// Версия: 3.0 (с кастомным select и исправленными сообщениями)
 // ====================================================
 
 // ==================== КОНФИГУРАЦИЯ ====================
 const API_URL = 'https://api.schelper.fairplay.su';
 let currentLanguage = localStorage.getItem('language') || 'ru';
+let factionSelectOpen = false;
 
 // ==================== СЛОВАРИ ПЕРЕВОДОВ ====================
 const translations = {
@@ -18,12 +19,13 @@ const translations = {
         login_button: 'Войти',
         register_button: 'Зарегистрироваться',
         register_title: 'Регистрация',
+        select_faction: 'Выберите фракцию',
         faction_stalker: 'Сталкер',
         faction_bandit: 'Бандит',
         faction_duty: 'Долг',
         faction_freedom: 'Свобода',
         faction_mercenaries: 'Наёмники',
-        faction_covenant: 'Ковенант',
+        faction_covenant: 'Завет',
         register_submit: 'Зарегистрироваться',
         back_to_login: 'Назад ко входу',
         logout_button: 'Выйти',
@@ -46,6 +48,7 @@ const translations = {
         login_button: 'Sign In',
         register_button: 'Register',
         register_title: 'Registration',
+        select_faction: 'Select faction',
         faction_stalker: 'Stalker',
         faction_bandit: 'Bandit',
         faction_duty: 'Duty',
@@ -79,6 +82,7 @@ function t(key, params = {}) {
 }
 
 function applyTranslations() {
+    // Текстовые элементы
     document.querySelectorAll('[data-i18n]').forEach(el => {
         const key = el.getAttribute('data-i18n');
         const params = {};
@@ -91,50 +95,161 @@ function applyTranslations() {
         el.textContent = t(key, params);
     });
     
+    // Placeholder'ы
     document.querySelectorAll('[data-i18n-ph]').forEach(el => {
         el.placeholder = t(el.getAttribute('data-i18n-ph'));
     });
     
+    // Заголовок страницы
     document.title = t('page_title');
+    
+    // Обновляем выбранную фракцию если есть
+    const selectedFaction = document.getElementById('reg-faction').value;
+    if (selectedFaction) {
+        const factionText = t('faction_' + selectedFaction.toLowerCase());
+        document.getElementById('selected-faction').textContent = factionText;
+    }
 }
 
 // ==================== ФУНКЦИИ ДЛЯ ФЛАГОВ ====================
-// Функция для обновления активного флага
 function updateActiveFlag() {
-    // Убираем класс active у всех флагов
     document.querySelectorAll('.flag-btn').forEach(btn => {
         btn.classList.remove('active');
     });
     
-    // Добавляем класс active к текущему флагу
     const currentFlag = document.querySelector(`.flag-btn[onclick*="${currentLanguage}"]`);
     if (currentFlag) {
         currentFlag.classList.add('active');
     }
 }
 
-// Обновлённая функция смены языка
 function setLanguage(lang) {
     currentLanguage = lang;
     localStorage.setItem('language', lang);
     applyTranslations();
-    updateActiveFlag(); // Обновляем активный флаг
+    updateActiveFlag();
     loadUserProfile();
 }
 
+// ==================== КАСТОМНЫЙ SELECT ДЛЯ ФРАКЦИЙ ====================
+
+// Переключение выпадающего списка
+function toggleFactionSelect() {
+    const select = document.querySelector('.custom-select');
+    const options = document.getElementById('faction-options');
+    
+    factionSelectOpen = !factionSelectOpen;
+    
+    if (factionSelectOpen) {
+        select.classList.add('active');
+        options.style.maxHeight = '300px';
+        options.style.opacity = '1';
+        options.style.visibility = 'visible';
+    } else {
+        select.classList.remove('active');
+        options.style.maxHeight = '0';
+        options.style.opacity = '0';
+        options.style.visibility = 'hidden';
+    }
+}
+
+// Выбор фракции
+function selectFaction(faction) {
+    const selectedElement = document.getElementById('selected-faction');
+    const hiddenInput = document.getElementById('reg-faction');
+    
+    // Находим перевод для выбранной фракции
+    const factionText = t('faction_' + faction.toLowerCase());
+    selectedElement.textContent = factionText;
+    hiddenInput.value = faction;
+    
+    // Закрываем выпадающий список
+    toggleFactionSelect();
+}
+
+// Закрытие выпадающего списка при клике вне его
+document.addEventListener('click', function(event) {
+    const select = document.querySelector('.custom-select');
+    if (!select) return;
+    
+    const isClickInside = select.contains(event.target);
+    
+    if (!isClickInside && factionSelectOpen) {
+        factionSelectOpen = false;
+        select.classList.remove('active');
+        const options = document.getElementById('faction-options');
+        if (options) {
+            options.style.maxHeight = '0';
+            options.style.opacity = '0';
+            options.style.visibility = 'hidden';
+        }
+    }
+});
+
 // ==================== УПРАВЛЕНИЕ ФОРМАМИ ====================
 function showRegister() {
-    document.getElementById('auth-section').classList.remove('show-profile');
-    document.getElementById('auth-section').classList.add('show-register');
+    // Скрываем форму входа
+    document.getElementById('login-form').style.opacity = '0';
+    document.getElementById('login-form').style.visibility = 'hidden';
+    document.getElementById('login-form').style.pointerEvents = 'none';
+    
+    // Показываем форму регистрации
+    document.getElementById('register-form').style.opacity = '1';
+    document.getElementById('register-form').style.visibility = 'visible';
+    document.getElementById('register-form').style.pointerEvents = 'all';
+    
+    // Меняем заголовок
+    document.getElementById('form-title').textContent = t('register_title');
+    
+    // Сбрасываем выбор фракции если не выбран
+    const hiddenInput = document.getElementById('reg-faction');
+    if (!hiddenInput.value) {
+        document.getElementById('selected-faction').textContent = t('select_faction');
+    }
 }
 
 function showLogin() {
-    document.getElementById('auth-section').classList.remove('show-register', 'show-profile');
+    // Показываем форму входа
+    document.getElementById('login-form').style.opacity = '1';
+    document.getElementById('login-form').style.visibility = 'visible';
+    document.getElementById('login-form').style.pointerEvents = 'all';
+    
+    // Скрываем форму регистрации
+    document.getElementById('register-form').style.opacity = '0';
+    document.getElementById('register-form').style.visibility = 'hidden';
+    document.getElementById('register-form').style.pointerEvents = 'none';
+    
+    // Скрываем профиль
+    document.getElementById('profile-section').style.opacity = '0';
+    document.getElementById('profile-section').style.visibility = 'hidden';
+    document.getElementById('profile-section').style.pointerEvents = 'none';
+    
+    // Меняем заголовок
+    document.getElementById('form-title').textContent = t('login_title');
+    
+    // Закрываем выпадающий список если открыт
+    if (factionSelectOpen) {
+        toggleFactionSelect();
+    }
 }
 
 function showProfile() {
-    document.getElementById('auth-section').classList.remove('show-register');
-    document.getElementById('auth-section').classList.add('show-profile');
+    // Скрываем обе формы
+    document.getElementById('login-form').style.opacity = '0';
+    document.getElementById('login-form').style.visibility = 'hidden';
+    document.getElementById('login-form').style.pointerEvents = 'none';
+    
+    document.getElementById('register-form').style.opacity = '0';
+    document.getElementById('register-form').style.visibility = 'hidden';
+    document.getElementById('register-form').style.pointerEvents = 'none';
+    
+    // Показываем профиль
+    document.getElementById('profile-section').style.opacity = '1';
+    document.getElementById('profile-section').style.visibility = 'visible';
+    document.getElementById('profile-section').style.pointerEvents = 'all';
+    
+    // Заголовок профиля (не меняем общий заголовок)
+    // document.getElementById('form-title').textContent = '';
 }
 
 // ==================== СООБЩЕНИЯ ====================
@@ -176,7 +291,7 @@ async function register() {
     const password = document.getElementById('reg-password').value;
     const faction = document.getElementById('reg-faction').value;
     
-    if (!login || !password) {
+    if (!login || !password || !faction) {
         showMessage(t('error_occurred') + ': ' + t('fill_all_fields'), 'error');
         return;
     }
@@ -295,6 +410,12 @@ function updateProfileDisplay(user) {
 // ==================== ИНИЦИАЛИЗАЦИЯ ====================
 document.addEventListener('DOMContentLoaded', () => {
     applyTranslations();
-    updateActiveFlag(); // Устанавливаем активный флаг при загрузке
+    updateActiveFlag();
     loadUserProfile();
+    
+    // Инициализируем скрытое поле для фракции если оно пустое
+    const factionInput = document.getElementById('reg-faction');
+    if (factionInput && !factionInput.value) {
+        document.getElementById('selected-faction').textContent = t('select_faction');
+    }
 });
