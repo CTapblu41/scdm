@@ -124,21 +124,17 @@ function setLanguage(lang) {
 
 // ==================== УПРАВЛЕНИЕ ФОРМАМИ ====================
 function showRegister() {
-    document.getElementById('login-form').style.display = 'none';
-    document.getElementById('register-form').style.display = 'block';
-    document.getElementById('profile-section').style.display = 'none';
+    document.getElementById('auth-section').classList.remove('show-profile');
+    document.getElementById('auth-section').classList.add('show-register');
 }
 
 function showLogin() {
-    document.getElementById('register-form').style.display = 'none';
-    document.getElementById('login-form').style.display = 'block';
-    document.getElementById('profile-section').style.display = 'none';
+    document.getElementById('auth-section').classList.remove('show-register', 'show-profile');
 }
 
 function showProfile() {
-    document.getElementById('login-form').style.display = 'none';
-    document.getElementById('register-form').style.display = 'none';
-    document.getElementById('profile-section').style.display = 'block';
+    document.getElementById('auth-section').classList.remove('show-register');
+    document.getElementById('auth-section').classList.add('show-profile');
 }
 
 // ==================== СООБЩЕНИЯ ====================

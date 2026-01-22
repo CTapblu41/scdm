@@ -1,30 +1,22 @@
 /* ============================================
-   StalCraft Division Manager - Minimal Dark Theme
-   Полная рабочая версия
+   StalCraft Division Manager - Финальный стабильный дизайн
    ============================================ */
 
-/* ==================== CSS ПЕРЕМЕННЫЕ ==================== */
 :root {
-    /* Цветовая палитра */
-    --bg-primary: #0a0a0a;          /* Основной фон */
-    --bg-secondary: #1a1a1a;        /* Фон карточек */
-    --bg-tertiary: #252525;         /* Фон полей ввода */
-    
-    --text-primary: #f0f0f0;        /* Основной текст */
-    --text-secondary: #b0b0b0;      /* Вторичный текст */
-    --text-muted: #888888;          /* Приглушённый текст */
-    
-    --border-color: #333333;        /* Цвет границ */
-    --border-hover: #444444;        /* Граница при наведении */
-    
-    --accent-primary: #3a8fb8;      /* Основной акцент (кнопки) */
-    --accent-hover: #4cc9f0;        /* Акцент при наведении */
-    
-    --success: #2e7d32;             /* Успех */
-    --error: #c62828;               /* Ошибка */
+    --bg-primary: #0a0a0a;
+    --bg-secondary: #1a1a1a;
+    --bg-tertiary: #252525;
+    --text-primary: #f0f0f0;
+    --text-secondary: #b0b0b0;
+    --text-muted: #888888;
+    --border-color: #333333;
+    --border-hover: #444444;
+    --accent-primary: #3a8fb8;
+    --accent-hover: #4cc9f0;
+    --success: #2e7d32;
+    --error: #c62828;
 }
 
-/* ==================== БАЗОВЫЕ СТИЛИ ==================== */
 * {
     margin: 0;
     padding: 0;
@@ -45,7 +37,7 @@ body {
     -moz-osx-font-smoothing: grayscale;
 }
 
-/* ==================== ОСНОВНОЙ КОНТЕЙНЕР ==================== */
+/* ==================== КОНТЕЙНЕР (ФИКСИРОВАННЫЙ РАЗМЕР) ==================== */
 .container {
     background-color: var(--bg-secondary);
     padding: 40px;
@@ -53,11 +45,12 @@ body {
     width: 100%;
     max-width: 440px;
     border: 1px solid var(--border-color);
-    position: relative; /* Для позиционирования сообщений */
-    min-height: 500px; /* Фиксированная высота */
+    position: relative;
+    height: 560px; /* ФИКСИРОВАННАЯ высота */
+    overflow: hidden; /* Скрываем всё, что выходит за границы */
 }
 
-/* ==================== ТИПОГРАФИКА ==================== */
+/* ==================== ЗАГОЛОВКИ ==================== */
 h1 {
     text-align: center;
     color: var(--text-primary);
@@ -65,6 +58,8 @@ h1 {
     font-size: 24px;
     font-weight: 600;
     letter-spacing: -0.25px;
+    position: relative;
+    z-index: 1;
 }
 
 h2 {
@@ -73,31 +68,76 @@ h2 {
     margin-bottom: 24px;
     font-size: 20px;
     font-weight: 600;
+    position: relative;
+    z-index: 1;
 }
 
-/* ==================== ФОРМЫ И ИХ КОНТЕЙНЕРЫ ==================== */
-.form-content {
-    display: flex;
-    flex-direction: column;
-    min-height: 340px; /* Фиксированная высота для всех форм */
+/* ==================== ОБЩИЙ КОНТЕЙНЕР ДЛЯ ВСЕХ ФОРМ ==================== */
+#auth-section {
+    position: relative;
+    height: 400px; /* ФИКСИРОВАННАЯ высота для всех форм */
 }
 
-/* Форма входа должна быть видима по умолчанию */
-#login-form {
-    display: flex !important; /* Переопределяет inline-style */
-    flex-direction: column;
-}
-
+/* ==================== ВСЕ ФОРМЫ (ОДИНАКОВЫЙ РАЗМЕР) ==================== */
+#login-form,
 #register-form,
 #profile-section {
-    display: none; /* Скрыты по умолчанию */
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    display: flex;
     flex-direction: column;
+    transition: opacity 0.3s ease, transform 0.3s ease;
+}
+
+/* Активная форма */
+#login-form {
+    opacity: 1;
+    transform: translateX(0);
+    z-index: 2;
+}
+
+/* Неактивные формы */
+#register-form,
+#profile-section {
+    opacity: 0;
+    transform: translateX(20px);
+    pointer-events: none;
+    z-index: 1;
+}
+
+/* Когда показываем регистрацию */
+.show-register #login-form {
+    opacity: 0;
+    transform: translateX(-20px);
+    pointer-events: none;
+}
+
+.show-register #register-form {
+    opacity: 1;
+    transform: translateX(0);
+    pointer-events: all;
+}
+
+/* Когда показываем профиль */
+.show-profile #login-form {
+    opacity: 0;
+    transform: translateX(-20px);
+    pointer-events: none;
+}
+
+.show-profile #profile-section {
+    opacity: 1;
+    transform: translateX(0);
+    pointer-events: all;
 }
 
 /* ==================== ГРУППЫ ПОЛЕЙ ВВОДА ==================== */
 .input-group {
     margin-bottom: 16px;
-    width: 100%;
+    flex-shrink: 0; /* Не сжимается */
 }
 
 /* ==================== ПОЛЯ ВВОДА И ВЫБОРА ==================== */
@@ -110,7 +150,7 @@ input, select {
     color: var(--text-primary);
     font-size: 14px;
     transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-    display: block; /* Важно для отображения */
+    flex-shrink: 0;
 }
 
 input:focus, select:focus {
@@ -138,7 +178,7 @@ button:not(.flag-btn) {
     margin-bottom: 12px;
     position: relative;
     overflow: hidden;
-    display: block; /* Важно для отображения */
+    flex-shrink: 0;
 }
 
 button:not(.flag-btn):hover {
@@ -164,19 +204,18 @@ button.secondary:hover {
     display: flex;
     justify-content: center;
     gap: 12px;
-    margin-top: auto; /* Прижимаем флаги к низу формы */
+    margin-top: auto; /* Прижимаем к низу */
     padding-top: 20px;
     border-top: 1px solid var(--border-color);
-    width: 100%;
+    flex-shrink: 0;
 }
 
-/* Флаги в профиле */
 .profile-flags {
     margin-top: 16px;
     padding-top: 16px;
 }
 
-/* ==================== КНОПКИ-ФЛАГИ (32px) ==================== */
+/* ==================== КНОПКИ-ФЛАГИ ==================== */
 .flag-btn {
     background: transparent;
     border: 1px solid var(--border-color);
@@ -189,44 +228,40 @@ button.secondary:hover {
     cursor: pointer;
     transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     padding: 0;
+    flex-shrink: 0;
 }
 
 .flag-btn:hover {
     border-color: var(--accent-primary);
     background-color: rgba(255, 255, 255, 0.05);
     transform: scale(1.1);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
-/* ==================== SVG ФЛАГИ ==================== */
 .flag-icon {
     width: 18px;
     height: 18px;
     display: block;
 }
 
-/* Флаг России (три полосы) */
 .flag-ru {
     border-radius: 1px;
     overflow: visible;
 }
 
-/* Флаг Великобритании */
 .flag-uk {
     border-radius: 1px;
 }
 
-/* Индикатор активного языка */
 .flag-btn.active {
     border-color: var(--accent-primary);
     background-color: rgba(58, 143, 184, 0.1);
     box-shadow: 0 0 0 2px rgba(58, 143, 184, 0.2);
 }
 
-/* ==================== СЕКЦИЯ ПРОФИЛЯ ==================== */
+/* ==================== ПРОФИЛЬ ==================== */
 #profile-section {
     text-align: center;
-    padding: 20px 0;
+    padding-top: 20px;
 }
 
 #profile-title {
@@ -246,33 +281,41 @@ button.secondary:hover {
     border-left: 3px solid var(--accent-primary);
 }
 
-/* ==================== СООБЩЕНИЯ (ОШИБКИ/УСПЕХ) ==================== */
+/* ==================== СООБЩЕНИЯ (СТАБИЛЬНАЯ ВЕРСИЯ) ==================== */
 #message {
     position: absolute;
-    left: 20px;
-    right: 20px;
-    bottom: 20px;
-    padding: 12px 16px;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    padding: 0;
     border-radius: 4px;
-    text-align: center;
     font-size: 14px;
     font-weight: 500;
-    
-    /* Анимация */
-    opacity: 0;
-    transform: translateY(10px);
-    transition: opacity 0.3s ease, transform 0.3s ease;
+    text-align: center;
     z-index: 100;
     
-    /* Скрыто по умолчанию */
-    visibility: hidden;
+    /* Анимация БЕЗ изменения layout */
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transform: translateY(10px);
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Плавное появление */
+/* Когда показываем */
 #message.show {
+    padding: 12px 16px;
+    max-height: 100px; /* Достаточно для текста */
     opacity: 1;
     transform: translateY(0);
-    visibility: visible;
+}
+
+/* Заранее резервируем место для сообщения */
+.container::after {
+    content: '';
+    display: block;
+    height: 60px; /* Место для сообщения */
+    visibility: hidden;
 }
 
 .message.success {
@@ -287,21 +330,15 @@ button.secondary:hover {
     color: var(--error);
 }
 
-/* ==================== УТИЛИТЫ ==================== */
-.hidden {
-    display: none !important;
-}
-
-.visible {
-    display: block !important;
-}
-
 /* ==================== АДАПТИВНОСТЬ ==================== */
 @media (max-width: 768px) {
     .container {
         padding: 32px 24px;
-        margin: 10px;
-        min-height: 480px;
+        height: 520px;
+    }
+    
+    #auth-section {
+        height: 380px;
     }
     
     h1 {
@@ -314,10 +351,6 @@ button.secondary:hover {
         margin-bottom: 20px;
     }
     
-    .form-content {
-        min-height: 320px;
-    }
-    
     .flag-btn {
         width: 30px;
         height: 30px;
@@ -326,15 +359,5 @@ button.secondary:hover {
     .flag-icon {
         width: 16px;
         height: 16px;
-    }
-    
-    #message {
-        left: 15px;
-        right: 15px;
-        bottom: 15px;
-    }
-    
-    button:not(.flag-btn):hover {
-        transform: translateY(-1px);
     }
 }
